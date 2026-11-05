@@ -1,0 +1,17 @@
+.vscode/
+.idea/
+# --- Device-Specific Layouts & Caches (Highly Recommended to Ignore) ---
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/graph.json
+.obsidian/cache/
+
+# --- Operating System Artifacts ---
+.DS_Store
+Thumbs.db
+
+# --- Obsidian's Internal Trash ---
+.trash/
+
+# --- Community Plugin Data (Optional log/tracking files) ---
+.obsidian-git-data
