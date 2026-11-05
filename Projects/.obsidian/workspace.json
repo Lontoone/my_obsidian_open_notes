@@ -13,12 +13,32 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Liunx/Coding on Android/Android coding setup.md",
+                "file": "Liunx/Coding on Android/Android coding setup (Jni).md",
+                "mode": "preview",
+                "source": true
+              },
+              "icon": "lucide-file",
+              "title": "Android coding setup (Jni)"
+            }
+          }
+        ]
+      },
+      {
+        "id": "6e25b60bfbdd214c",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "9d38ff6b04ed3c08",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Liunx/Coding on Android/Android coding setup (Jni).md",
                 "mode": "source",
                 "source": true
               },
               "icon": "lucide-file",
-              "title": "Android coding setup"
+              "title": "Android coding setup (Jni)"
             }
           }
         ]
@@ -83,8 +103,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "right": {
     "id": "4962c9ee5a3f33fb",
@@ -100,7 +119,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Liunx/Coding on Android/Android coding setup.md",
+                "file": "Liunx/Coding on Android/Android coding setup (Jni).md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -119,7 +138,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Liunx/Coding on Android/Android coding setup.md",
+                "file": "Liunx/Coding on Android/Android coding setup (Jni).md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
@@ -162,7 +181,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Liunx/Coding on Android/Android coding setup.md",
+                "file": "Liunx/Coding on Android/Android coding setup (Jni).md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
@@ -201,16 +220,17 @@
       "table-editor-obsidian:Advanced Tables Toolbar": false
     }
   },
-  "active": "7ae1af247b2fe27f",
+  "active": "9d38ff6b04ed3c08",
   "lastOpenFiles": [
+    "Pasted image 20261105213612.png",
+    "Liunx/Coding on Android/Android coding setup (Jni).md",
+    "Welcome.md",
+    "Liunx/Untitled.md",
     "Liunx/Coding on Android/images",
     "Liunx/Coding on Android/images/termux_interface.png",
-    "Liunx/Untitled.md",
-    "Liunx/Coding on Android/Android coding setup.md",
     "Liunx/Untitled/Untitled.canvas",
     "Liunx/Coding on Android",
     "Liunx/Pasted image 20261105200454.png",
-    "Welcome.md",
     "Liunx"
   ]
 }
