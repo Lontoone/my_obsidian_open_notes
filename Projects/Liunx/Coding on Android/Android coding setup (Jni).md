@@ -39,7 +39,7 @@ gh auth login
 ```
 
 %% col-break:b:primary %% 
-![[Pasted image 20261105213612.png|300]]
+![|300](https://i.meee.com.tw/cH6bTVH.png)
 %% col-end %%
 
 
@@ -229,6 +229,252 @@ Hello from Android native executable!
 - 若專案已建立在外部儲存空間，請搬移至家目錄：        
     
     ```Bash
+    cp -r ~/storage/shared/.../Projects/hello_jni $HOME/hello_jni
+    cd $HOME/hello_jni/jni
+    ```
+
+
+
+---
+
+# Termux Environment Setup & Android Native Development Notes
+
+- **Official Documentation**: [Termux Getting Started](https://wiki.termux.com/wiki/Getting_started)
+- **Source Code**: [GitHub - termux/termux-app](https://github.com/termux/termux-app)
+    Download the APK corresponding to your architecture from the [Releases page](https://github.com/termux/termux-app/releases/tag/v0.118.3):
+- **32-bit devices**: Download `armeabi-v7a`    
+- **64-bit devices**: Download `arm64-v8a`
+
+After installation and launch, the interface appears as follows:
+![](https://i.meee.com.tw/VlDkzyJ.png)
+
+> **Core Concepts**
+> 
+> - **NDK (Native Development Kit)**: A toolset provided by Google that enables developers to implement native code in C/C++ or build binary executables directly on Android.
+>     
+> - **JNI (Java Native Interface)**: A foreign function interface bridge between Java/Kotlin and C/C++. When invoked by the Android Runtime (ART), native code is typically built as a `.so` shared library; for standalone command-line execution, it is built as a native executable.
+>     
+> - **ABI (Application Binary Interface)**: Defines the binary interface contract with the underlying system and CPU instruction set; common architectures include `armeabi-v7a` (32-bit ARM) and `arm64-v8a` (64-bit ARM).
+
+## Multiplexing Terminal: tmux Setup
+
+```
+pkg install tmux
+tmux
+```
+
+- **Horizontal split**: Press `Ctrl + b`, then `Shift + %`
+    
+- **Vertical split**: Press `Ctrl + b`, then `Shift + "`      
+    
+
+# Git Environment Configuration
+
+%% col-start %%
+%% col-break:b:primary %%
+
+```
+# Update package repositories and install Git and GitHub CLI
+pkg update
+pkg install git gh openssh -y
+
+# Log in to GitHub
+gh auth login
+```
+
+%% col-break:b:primary %%
+![|300](https://i.meee.com.tw/cH6bTVH.png)
+%% col-end %%
+
+  
+
+# Development Toolchain Installation
+
+```Bash
+# Grant storage access permissions
+termux-setup-storage
+
+# Install build tools and Java environment
+pkg install clang make cmake git openjdk-17 aapt apksigner ecj -y
+```
+
+Check the current hardware and user-space architecture:
+
+```Bash
+uname -m
+```
+
+- `armv7l` or `armv8l`: Running in **32-bit ARM** mode.    
+- `aarch64`: Running in **64-bit ARM** mode.    
+
+# [Hands-on] Hello Native / JNI Project
+
+### Directory Structure  
+
+```Plaintext
+project/
+└── jni/
+    ├── Android.mk   # NDK build script (Recommended for 64-bit)
+    ├── Makefile     # Standard makefile (Recommended for 32-bit or lightweight setups)
+    └── main.c       # C source file
+```
+
+### Source Code and Configuration Files
+
+%% col-start %% 
+%% col-break:b:primary %% 
+**main.c**
+
+```c
+#include <stdio.h>
+
+int main() {
+    printf("Hello from Android native executable!\n");
+    return 0;
+}
+```
+
+%% col-break:b:primary %% 
+**Android.mk**
+
+```makefile
+LOCAL_PATH := $(call my-dir)
+
+include $(CLEAR_VARS)
+
+LOCAL_MODULE    := my_executable
+LOCAL_SRC_FILES := main.c
+
+include $(BUILD_EXECUTABLE)
+```
+
+%% col-break:b:primary %%
+**Makefile** 
+
+```makefile
+CC = clang
+# -pie / -fPIE: Generates Position-Independent Executables (required by Android 5.0+)
+CFLAGS = -O2 -pie -fPIE -Wall
+TARGET = my_executable
+SRC = main.c
+
+all: $(TARGET)
+
+$(TARGET): $(SRC)
+	$(CC) $(CFLAGS) $(SRC) -o $(TARGET)
+	chmod +x $(TARGET)
+
+clean:
+	rm -f $(TARGET)
+```
+
+%% col-end %%
+
+
+# Compilation Methods
+
+### Method A: Build with Official Android NDK (for aarch64)
+
+Suitable for modular builds using `Android.mk`:
+
+
+```bash
+cd ~
+wget https://dl.google.com/android/repository/android-ndk-r30-linux.zip
+unzip android-ndk-r30-linux.zip
+rm android-ndk-r30-linux.zip
+
+# Add to environment variables
+echo 'export ANDROID_NDK_HOME=$HOME/android-ndk-r30-linux' >> ~/.bashrc
+echo 'export PATH=$ANDROID_NDK_HOME:$PATH' >> ~/.bashrc
+source ~/.bashrc
+```
+
+Navigate to the `project/` directory and execute:
+
+  
+```
+ndk-build
+```
+
+### Method B: Build with Makefile and ndk-multilib
+
+> **Terminology Note: ndk-multilib**
+> 
+> A lightweight cross-compilation package provided in the official Termux repository. It contains Android C library headers and target libraries for multiple architectures (32-bit / 64-bit), allowing a single Clang compiler to target various ABIs without requiring the full, bulky NDK package.
+> 
+>   
+
+```
+# Install multilib and Android system sysroot headers
+pkg install clang make ndk-multilib ndk-sysroot -y
+
+# Navigate to directory and build
+cd ~/project/jni
+make
+./my_executable
+```
+
+### Method C: Compile Directly with Clang CLI
+
+Most straightforward when prebuilt NDK binaries are unavailable for 32-bit devices, or when compiling a single source file:
+
+- **Compile 32-bit executable (armeabi-v7a)**:
+    
+    ```Bash
+    clang -target armv7a-linux-androideabi29 -O2 -pie -fPIE main.c -o my_executable_arm32
+    ```
+    
+- **Compile 64-bit executable (arm64-v8a)**:
+    
+    ```Bash
+    clang -target aarch64-linux-android29 -O2 -pie -fPIE main.c -o my_executable_arm64
+    ```
+    
+- **Compile JNI shared library (.so) for Android App integration**:
+    
+    ```Bash
+    clang -target aarch64-linux-android29 -shared -fPIC main.c -o libnative.so
+    ```
+    
+
+%% col-start %% 
+%% col-break:b:primary %%
+**Execution Workflow**
+
+```bash
+cd ~/path/to/your/project/jni
+clang -O2 -pie -fPIE main.c -o my_executable
+chmod +x my_executable
+./my_executable
+```
+
+%% col-break:b:primary %% 
+**Terminal Output**
+```
+~/hello_jni/jni $ ls -al
+total 23
+drwx------. 2 u0_a460 u0_a460 3452 Nov  1 11:04 .
+drwx------. 3 u0_a460 u0_a460 3452 Nov  1 11:04 ..
+-rw-------. 1 u0_a460 u0_a460  345 Nov  1 11:04 Android.mk
+-rw-------. 1 u0_a460 u0_a460  104 Nov  1 11:04 main.c
+-rwx------. 1 u0_a460 u0_a460 4396 Nov  1 11:04 my_executable
+~/hello_jni/jni $ ./my_executable
+Hello from Android native executable!
+```
+
+%% col-end %%
+
+  
+
+# Notes
+
+- **Filesystem Permission Restrictions**: Android mounts external storage partitions (such as `/sdcard/` and `/storage/emulated/0/`) with `noexec`, **preventing direct binary execution on these paths**. Ensure project files are placed under Termux's private directory (`$HOME` or `~`).
+    
+    
+- If a project was created on external storage, move it to the home directory:
+    
+    ```
     cp -r ~/storage/shared/.../Projects/hello_jni $HOME/hello_jni
     cd $HOME/hello_jni/jni
     ```

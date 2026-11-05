@@ -103,7 +103,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 300,
+    "collapsed": true
   },
   "right": {
     "id": "4962c9ee5a3f33fb",
@@ -222,8 +223,9 @@
   },
   "active": "9d38ff6b04ed3c08",
   "lastOpenFiles": [
-    "Pasted image 20261105213612.png",
+    "Pasted image 20261105213612.png.md",
     "Liunx/Coding on Android/Android coding setup (Jni).md",
+    "Pasted image 20261105213612.png",
     "Welcome.md",
     "Liunx/Untitled.md",
     "Liunx/Coding on Android/images",
